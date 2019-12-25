@@ -1,0 +1,7 @@
+Toda la información relacionada con la disposición de los archivos, como se han realizado los diferentes puntos exigidos dentro de la práctica, así como algunos añadidos que hacen la práctica más cómoda y/o atractiva, se encuentran en el archvio Readme dentro de la carpeta Utilidades.
+
+La funcionalidad exigida por la práctica es lo primero que se ha finalizado, aunque tras hablar con el profesor se ha decidido realizar una serie de añadidos para dejar la tienda con la mayor cantidad de opciones posible. 
+
+Un ejemplo de esto es el cambio de la tabla compras para añadir el usuario que realiza la compra y la fecha y hora en la que lo realiza. Además, al añadir más información, se ha cambiado la clave primaria a la combinación de Fecha/Hora, Id de la compra, Id del producto. Este cambio se ha hecho para permitir que varios usuarios puedan comprar a la misma hora del mismo día, varios productos a la vez.
+
+Este cambio y todos los demás podrán encontrarse más detallados en el fichero Readme. Muchas gracias por utilizar la Tienda Online.
