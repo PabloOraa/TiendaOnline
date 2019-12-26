@@ -20,8 +20,8 @@
 						<p><font color="red">El usuario que se intenta crear ya existe</font></p>
 				  		<%sesion.setAttribute("ErrorAuth", false);
 				    } %>
-				Usuario:	<input id="Name" onchange="habilitarBoton();" type=text name=User><br><br>
-				Contrase&ntilde;a: <input id="Pass" onchange="habilitarBoton(); probarPass();" type=password name=Pass/><br/>
+				Usuario:	<input id="Name" onchange="habilitarBoton();" type=text name="User"><br><br>
+				Contrase&ntilde;a: <input id="Pass" onchange="habilitarBoton(); probarPass();" type=password name="Pass"/><br/>
 				<p id="textoPass"></p>
 				<input id="Register" disabled  type=submit name="Tipo" value="Alta"/>
 				<a href="Validacion.jsp" >Iniciar sesi&oacute;n</a>  

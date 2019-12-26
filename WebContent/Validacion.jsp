@@ -19,8 +19,8 @@
 						<p><font color="red">El usuario o la contrase&ntilde;a introducida no es correcto.</font></p>
 						<% sesion.setAttribute("ErrorAuth", false);
 				    } %>
-				Usuario:	<input id="Name" onchange="habilitarBoton();" type=text name=User><br><br>
-				Contrase&ntilde;a: <input id="Pass" onchange="habilitarBoton();" type=password name=Pass><br><br> 
+				Usuario:	<input id="Name" onchange="habilitarBoton();" type=text name="User"><br><br>
+				Contrase&ntilde;a: <input id="Pass" onchange="habilitarBoton();" type=password name="Pass"><br><br> 
 				<input id="Register" disabled type=submit name="Tipo" value="Ir a tienda"/>
 				<a href="Alta.jsp">Crear cuenta</a>
 				<div  align="right">

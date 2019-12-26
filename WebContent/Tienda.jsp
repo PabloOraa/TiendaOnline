@@ -89,9 +89,9 @@
 		  <%}
 			else
 			{
+				total = 0;
 				if(request.getParameter("Opcion").equals("Cestar"))
 				{
-					total = 0;
 					if(!listaProductos.contains(producto))
 					{
 						listaProductos.add(producto);
