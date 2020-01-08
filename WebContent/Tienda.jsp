@@ -132,6 +132,7 @@
 							 <%} %>
 							 <tr>
 							 	<td colspan="4">TOTAL COMPRA: <%=total %> euros</td>
+							 	<% sesion.setAttribute("Total", total); %>
 							 </tr>
 						</table>
 					

@@ -48,14 +48,14 @@ public class TiendaBD
     public int obtenerIdUltimo()
     {
 		int id = 0;
-		String getId = "SELECT IdShopping FROM COMPRA";
+		String getId = "SELECT IdShopping FROM TIQUET";
 		try (Connection con = fuenteDatos.getConnection();
 			 PreparedStatement ps1 = con.prepareStatement(getId, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
 		{
 			ResultSet rs = ps1.executeQuery();
 			rs.last();
 			if(rs.getRow() != -1)
-				id = rs.getInt("IdShopping")+1;
+				id = rs.getInt("IdShopping");
 		} catch (SQLException e) 
 		{
 			e.printStackTrace();
@@ -152,5 +152,26 @@ public class TiendaBD
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	/**
+	 * Añade un nuevo tiquet a la base de datos con la fecha y hora de la compra, el usuario y el total que le ha costado la 
+	 * compra al cliente
+	 * @param user Usuario que realiza la compra
+	 * @param total Cantidad total gastada por el cliente
+	 * @return ID del Tiquet que se acaba de crear
+	 */
+	public int addTiquet(User user, double total)
+	{
+		String addTiquet = "INSERT INTO TIQUET VALUES(NOW(), 0," + user.getId() + "," + total +")";
+		try(Connection con = fuenteDatos.getConnection();
+				 PreparedStatement ps = con.prepareStatement(addTiquet);)
+		{
+			ps.executeUpdate();
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return obtenerIdUltimo();
 	}
 }

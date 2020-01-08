@@ -212,14 +212,15 @@ public class ServletControlador extends HttpServlet
 	}	
 	
 	/**
-	 * Añade la compra guardada en la sesión del usuario a la base de datos. Esto lo hará con el id del producto, id del usuario, fecha/hora, id de la compra, unidades y precio.
+	 * Añade la compra guardada en la sesión del usuario a la base de datos. Lo primero que hará será crear el
+	 * tiquet de la compra a partir del usuario y el total, devolviendo el ID que se acaba de insertar.
+	 * <br/>
+	 * A continuación se insertará en Compra cada producto con su cantidad y el precio total gastado.
 	 * @param sesion Sesión de la aplicación
 	 */
 	private void addCompra(HttpSession sesion)
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-		String fecha = sdf.format(new Date().getTime());
-		int id = tiendaBD.obtenerIdUltimo();
+		int id = tiendaBD.addTiquet((User)sesion.getAttribute("User"), (Double)sesion.getAttribute("Total"));
 		
 		@SuppressWarnings("unchecked")
 		List<String> listaPrec = (List<String>) sesion.getAttribute("listaPrec");
@@ -227,9 +228,8 @@ public class ServletControlador extends HttpServlet
 		List<Integer> listaNum = (List<Integer>) sesion.getAttribute("listaUnidades");
 		for(int i = 0; i < listaPrec.size();i++)
 		{	
-			String SQL = "INSERT INTO COMPRA(FECHAHORA,IDSHOPPING,IDPRODUCT,IDUSER,QUANTITY,TOTAL) VALUES ('"
-							+ fecha + "'," + id + "," + getIdProduct(i,sesion) + "," + usuario.getId() + "," +
-							listaNum.get(i) +"," + Double.parseDouble(listaPrec.get(i)) + ")";
+			String SQL = "INSERT INTO COMPRA(IDSHOPPING,IDPRODUCT,QUANTITY,TOTAL) VALUES (" + id + "," + getIdProduct(i,sesion) +
+					"," + listaNum.get(i) +"," + Double.parseDouble(listaPrec.get(i)) + ")";
 			tiendaBD.addCompra(SQL);
 		}
 	}
