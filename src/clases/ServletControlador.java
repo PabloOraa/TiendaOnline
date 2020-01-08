@@ -227,11 +227,7 @@ public class ServletControlador extends HttpServlet
 		@SuppressWarnings("unchecked")
 		List<Integer> listaNum = (List<Integer>) sesion.getAttribute("listaUnidades");
 		for(int i = 0; i < listaPrec.size();i++)
-		{	
-			String SQL = "INSERT INTO COMPRA(IDSHOPPING,IDPRODUCT,QUANTITY,TOTAL) VALUES (" + id + "," + getIdProduct(i,sesion) +
-					"," + listaNum.get(i) +"," + Double.parseDouble(listaPrec.get(i)) + ")";
-			tiendaBD.addCompra(SQL);
-		}
+			tiendaBD.addCompra(id,getIdProduct(i,sesion),listaNum.get(i),Double.parseDouble(listaPrec.get(i)));
 	}
 
 	/**

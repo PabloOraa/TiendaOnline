@@ -64,15 +64,18 @@ public class TiendaBD
     }
     
     /**
-     * Añade una compra nueva al que haya iniciado sesión dentro de la aplicación. Debiddo a que una compra puede contener más de
-     * un producto, y solo varían algunos datos, se ha preferido psar por parámetro la sentencia SQL completa de los datos a añadir
-     * en lugar de formarla como en otras funciones.
-     * @param SQL Sentencia SQL a ejecutar para el añadido de la linea de compra
+     * Se añade una nueva linea de compra para un producto en concreto de una compra que se haya guardado con anterioridad.
+     * @param idShoopping ID de la compra que se ha creado en el momento de dar a Comprar.
+     * @param idProduct ID del producto que se ha comprado
+     * @param unidades Unidades del producto comprado
+     * @param total Coste total del producto que ha comprado el usuario.
      */
-	public void addCompra(String SQL)
+	public void addCompra(int idShoopping, int idProduct, int unidades, double total)
 	{
+		String addLineaCompra = "INSERT INTO COMPRA(IDSHOPPING,IDPRODUCT,QUANTITY,TOTAL) "
+							  + "VALUES (" + idShoopping + "," + idProduct + "," + unidades +"," + total + ")";
 		try(Connection con = fuenteDatos.getConnection();
-			PreparedStatement ps1 = con.prepareStatement(SQL);)
+			PreparedStatement ps1 = con.prepareStatement(addLineaCompra);)
 		{
 			ps1.executeUpdate();
 		} catch (SQLException e) 
