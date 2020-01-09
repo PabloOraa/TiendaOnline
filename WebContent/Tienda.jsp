@@ -1,3 +1,6 @@
+<%@page import="java.util.Map.Entry"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="clases.ServletControlador"%>
 <%@page import="clases.User"%>
 <%@page import="java.sql.ResultSet"%>
@@ -15,13 +18,10 @@
     pageEncoding="ISO-8859-1"%>
     
 <%! List<Product> productos = new ArrayList<>(); 
-	List<String> listaProductos = new ArrayList<>();
-	List<String> listaPrecios = new ArrayList<>();
-	List<Integer> listaUnidades = new ArrayList<>();
-	String producto;
-	String precio;
+	Map<Integer,Integer> productosSeleccionados = new HashMap<>();
 	int numerUnidades;
 	double total;
+	double totalProd;
 	boolean userIniciado = false;
 	HttpSession sesion;
 	ServletControlador servlet = new ServletControlador(true);
@@ -42,34 +42,26 @@
 		</script>
 	</head>
 	<body>
-		<%	
-			productos = servlet.obtenerProducto();
-			
+		<%	productos = servlet.obtenerProducto();
 			if(((Product)productos.get(0)).getId() == 0)
 				productos.remove(0);
 			sesion = request.getSession(true);
 			if(!sesion.isNew())
 			{
-				listaProductos = (List)sesion.getAttribute("listaProd");
-				listaPrecios = (List)sesion.getAttribute("listaPrec");
-				listaUnidades = (List)sesion.getAttribute("listaUnidades");
+				productosSeleccionados = (HashMap<Integer,Integer>)sesion.getAttribute("productosSeleccionados");
 				userIniciado = true;
 				usuario = (User)sesion.getAttribute("User");
 			}
 			else
 			{
-				sesion.setAttribute("listaProd", listaProductos);
-				sesion.setAttribute("listaPrec", listaPrecios);
-				sesion.setAttribute("listaUnidades", listaUnidades);
+				sesion.setAttribute("productosSeleccionados", productosSeleccionados);
 				sesion.setAttribute("User", new User());
 			}
-			String product = request.getParameter("producto") != null ? request.getParameter("producto") : "";
-			producto = product.equals("") ? "" : product.substring(0,product.indexOf("-")-1);
+			int productID = request.getParameter("producto") != null ? Integer.parseInt(request.getParameter("producto")) : 0;
 			numerUnidades = request.getParameter("Unidades") != null && request.getParameter("Unidades") != "" ? Integer.parseInt(request.getParameter("Unidades")) : 0;
-			precio = product.equals("") ? "" : String.valueOf(Double.parseDouble((product.substring(product.indexOf("-")+2)).substring(0,2))*numerUnidades);
 		if(userIniciado)
 		{
-			if(producto == "" && precio == "" || numerUnidades == 0)
+			if(productID == 0 || numerUnidades == 0)
 			{%>
 				<div align="center">
 				<h1>Bienvenido a la Tienda de DAM <%=usuario.getUsername() != "" ? usuario.getUsername() : "" %>.</h1>
@@ -77,10 +69,10 @@
 						<b>Listado productos:</b> <select name="producto">
 							<%for(Product prod : productos) 
 							  {%>
-							  	<option><%=prod %></option>
+							  	<option value="<%=prod.getId()%>"><%=prod %></option>
 							<%} %>
 						</select>
-						<b>Unidades: </b> <input type="Number" id="Unidades" Name="Unidades"/>
+						<b>Unidades: </b> <input type="Number" min=1 id="Unidades" Name="Unidades"/>
 						<br/>
 						<input type="submit" name="Opcion" value="Cestar"/>
 						<input style="border:none; color:blue; background-color:white; cursor:pointer;" type="submit" name="Opcion" value="Ver Carrito" onclick="ajustarUnidades();"/>
@@ -92,18 +84,10 @@
 				total = 0;
 				if(request.getParameter("Opcion").equals("Cestar"))
 				{
-					if(!listaProductos.contains(producto))
-					{
-						listaProductos.add(producto);
-						listaPrecios.add(precio);
-						listaUnidades.add(numerUnidades);
-					}
+					if(!productosSeleccionados.containsKey(productID))
+						productosSeleccionados.put(productID ,numerUnidades);
 					else
-					{
-						int posicion = listaProductos.indexOf(producto);
-						listaUnidades.set(posicion, listaUnidades.get(posicion)+numerUnidades);
-						listaPrecios.set(posicion, String.valueOf(listaUnidades.get(posicion)*Double.parseDouble(precio)));
-					}
+						productosSeleccionados.put(productID, productosSeleccionados.get(productID)+numerUnidades);
 				}
 				%>
 				<div align="center">
@@ -119,14 +103,16 @@
 								<td><b>PRECIO (euros)</b></td>
 								<td><b>UNIDADES</b></td>
 							</tr>
-							<% for(int i = 0; i < listaProductos.size(); i++)
+							<% for(Entry<Integer, Integer> entry : productosSeleccionados.entrySet())
 							   {
-							   		total += Double.parseDouble(listaPrecios.get(i));%>
+								    Product p = servlet.getProduct(entry.getKey());
+								    totalProd = p.getPrecio() * entry.getValue();
+							   		total += totalProd;%>
 							   		<tr>
-										<td><input type="radio" onchange="habilitar();" name="ProdElim" value="<%=listaProductos.get(i) %>"></td>
-										<td><%=listaProductos.get(i) %></td>
-										<td><%=listaPrecios.get(i) %>euros</td>
-										<td><%=listaUnidades.get(i) %></td>
+										<td><input type="radio" onchange="habilitar();" name="ProdElim" value="<%=entry.getKey() %>"></td> <!-- listaProductos.get(i) -->
+										<td><%=p.getDescripcion() %></td>
+										<td><%=totalProd %>euros</td>
+										<td><%=entry.getValue() %></td>
 									</tr>
 									
 							 <%} %>

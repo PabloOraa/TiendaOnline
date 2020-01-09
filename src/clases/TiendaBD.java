@@ -12,6 +12,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+/**
+ * Conexión con la base de datos y sus métodos necesarios
+ * @version 1.2
+ * @author Pablo Oraa López
+ */
 public class TiendaBD
 {
 	/**
@@ -176,5 +181,26 @@ public class TiendaBD
 			e.printStackTrace();
 		}
 		return obtenerIdUltimo();
+	}
+	
+	/**
+	 * Recupera el producto que esté asociado al ID que se le haya pasado por parámetro.
+	 * @param productID ID del producto a buscar
+	 * @return Producto encontrado en la base de datos.
+	 */
+	public Product getProduct(int productID)
+	{
+		String searchProduct = "SELECT * FROM PRODUCTO WHERE IDPRODUCT = " + productID;
+		try(Connection con = fuenteDatos.getConnection();
+				 PreparedStatement ps = con.prepareStatement(searchProduct);)
+		{
+			ResultSet rs = ps.executeQuery();
+			while(rs.next())
+				return new Product(rs.getInt("IDPRODUCT"),rs.getString("DESCRIPTION"), rs.getDouble("PRICE"));
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

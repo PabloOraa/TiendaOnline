@@ -1,6 +1,11 @@
 package clases;
 
-public class User
+/**
+ * Clase User con todos los valores necesarios para recuperar de la base de datos
+ * @version 1.2
+ * @author Pablo Oraa López
+ */
+public class User 
 {
 	/**
 	 * Número identificativo del usuario dentro del sistema.

@@ -1,5 +1,10 @@
 package clases;
 
+/**
+ * Clase Product con los valores que podemos encontrar en la base de datos
+ * @version 1.2
+ * @author Pablo Oraa López
+ */
 public class Product
 {
 	/**

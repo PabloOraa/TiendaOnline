@@ -2,9 +2,11 @@ package clases;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class ServletControlador
+ * @version 1.2
+ * @author Pablo Oraa López
  */
 @WebServlet("/ServletControlador")
 @Resource(name = "jdbs/miDataSource")
@@ -74,7 +78,7 @@ public class ServletControlador extends HttpServlet
 					addCompra(request.getSession(true));
 				else if(request.getParameter("Option").equals("Eliminar producto"))
 				{
-					deleteProduct(request.getParameter("ProdElim"), request.getSession(true));
+					deleteProduct(Integer.parseInt(request.getParameter("ProdElim")), request.getSession(true));
 					irTienda = true;
 				}
 		}
@@ -84,20 +88,16 @@ public class ServletControlador extends HttpServlet
 	/**
 	 * Elimina un producto de las listas que ha seleccionado el usuario, y que aún no se ha guardado en la base de datos.
 	 * <br/>
-	 * Localiza el producto dentro de la lista. Siempre y cuanto este exista, es decir, sea diferente que -1, eliminará el producto de 
-	 * listaPro, listaPrec y listaUnidades. Todas estas listas se encontrarán dentro de la sesión.
+	 * Se recupera la lista de productos desde la sesión (en un HashMap) y se eliminará por la clave del producto que hayamos
+	 * pasado por parámetro. Una vez hecho esto, se guarda el nuevo mapa en la sesión de nuevo.
 	 * @param producto Producto que se desea eliminar de las listas.
 	 * @param sesion Sesión de la aplicación.
 	 */
-	private void deleteProduct(String producto, HttpSession sesion)
+	private void deleteProduct(int producto, HttpSession sesion)
 	{
-		int pos = ((List<?>)sesion.getAttribute("listaProd")).indexOf(producto);
-		if(pos != -1)
-		{
-			((List<?>)sesion.getAttribute("listaProd")).remove(pos);
-			((List<?>)sesion.getAttribute("listaPrec")).remove(pos);
-			((List<?>)sesion.getAttribute("listaUnidades")).remove(pos);
-		}
+		Map<Integer,Integer> productos = (Map<Integer, Integer>) sesion.getAttribute("productosSeleccionados");
+		productos.remove(producto);
+		sesion.setAttribute("productosSeleccionados", productos);
 	}
 
 	/**
@@ -151,8 +151,7 @@ public class ServletControlador extends HttpServlet
 	 * Configura los parámetros de la sesión que queremos utilizar en Tienda.jsp. Se llama al método cuando hemos podido iniciar
 	 * sesión correctamente dentro de la Tienda Online.
 	 * <br>
-	 * Si la sesión es nueva, o en su defecto la lista de productos (y por tanto todas las listas) no existe, se añaden las listas
-	 * completamente nuevas para empezar a añadir productos.
+	 * Si la sesión es nueva, o en su defecto la lista de productos (en forma de HashMap) no existe, se añadirá ese HashMap a la sesión.
 	 * <br>
 	 * Como se inicia sesión siempre que se llama a este método, se guarda el atributo User con todos los datos del usuario en cuestión.
 	 * @param request Request del servlet que recibimos de doPost.
@@ -160,15 +159,8 @@ public class ServletControlador extends HttpServlet
 	private void configurarSesion(HttpServletRequest request) 
 	{
 		HttpSession sesion = request.getSession(true);
-		List<String> listaProductos = new ArrayList<>();
-		List<String> listaPrecios = new ArrayList<>();
-		List<Integer> listaUnidades = new ArrayList<>();
-		if(sesion.isNew() || (!sesion.isNew() && sesion.getAttribute("listaProd") == null))
-		{
-			sesion.setAttribute("listaProd", listaProductos);
-			sesion.setAttribute("listaPrec", listaPrecios);
-			sesion.setAttribute("listaUnidades", listaUnidades);
-		}
+		if(sesion.isNew() || (!sesion.isNew() && sesion.getAttribute("productosSeleccionados") == null))
+			sesion.setAttribute("productosSeleccionados", new HashMap<Integer,Integer>());
 		sesion.setAttribute("User", usuario);
 	}
 
@@ -196,10 +188,7 @@ public class ServletControlador extends HttpServlet
 	private boolean recuperarUsuario(String user, String pass)
 	{
 		usuario = tiendaBD.recuperarUsuario(user,pass);
-		if(usuario == null)
-			return false;
-		else
-			return true;
+		return usuario != null;
 	}
 
 	/**
@@ -221,32 +210,10 @@ public class ServletControlador extends HttpServlet
 	private void addCompra(HttpSession sesion)
 	{
 		int id = tiendaBD.addTiquet((User)sesion.getAttribute("User"), (Double)sesion.getAttribute("Total"));
-		
-		@SuppressWarnings("unchecked")
-		List<String> listaPrec = (List<String>) sesion.getAttribute("listaPrec");
-		@SuppressWarnings("unchecked")
-		List<Integer> listaNum = (List<Integer>) sesion.getAttribute("listaUnidades");
-		for(int i = 0; i < listaPrec.size();i++)
-			tiendaBD.addCompra(id,getIdProduct(i,sesion),listaNum.get(i),Double.parseDouble(listaPrec.get(i)));
+		Map<Integer,Integer> productos = (Map<Integer, Integer>) sesion.getAttribute("productosSeleccionados");
+		productos.forEach((u,v) -> tiendaBD.addCompra(id, u, v, getProduct(u).getPrecio()*v));
 	}
 
-	/**
-	 * Obtiene el ID de un producto a partir de la lista completa de productos, comparándolo con la posición del producto que nos interese.
-	 * @param i Posición del producto en el que estamos actualmente en la lista de productos seleccionados por el usuario.
-	 * @param sesion Sesión de la aplicación.
-	 * @return Número que indica el id del producto en cuestión. Si no se ha entonctrado ningún resultado devolverá -1.
-	 */
-	private int getIdProduct(int i, HttpSession sesion)
-	{
-		List<Product> listaProductos = tiendaBD.obtenerProductos();
-		@SuppressWarnings("unchecked")
-		List<String> listaProd = (List<String>) sesion.getAttribute("listaProd");
-		for(Product p : listaProductos)
-			if(p.getDescripcion().equals(listaProd.get(i)))
-				return p.getId();
-		return -1;
-	}
-	
 	/**
 	 * Recupera el usuario que, previamente, se haya iniciado sesión o registrado en la aplicación.
 	 * @return Usuario con el que se ha iniciado sesión en la aplicación
@@ -254,5 +221,15 @@ public class ServletControlador extends HttpServlet
 	public User getUser()
 	{
 		return usuario;
+	}
+	
+	/**
+	 * Recupera el producto que esté asociado al ID que se le haya pasado por parámetro.
+	 * @param productID ID del producto a buscar
+	 * @return Producto encontrado en la base de datos.
+	 */
+	public Product getProduct(int productID)
+	{
+		return tiendaBD.getProduct(productID);
 	}
 }
