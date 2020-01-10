@@ -43,8 +43,6 @@
 	</head>
 	<body>
 		<%	productos = servlet.obtenerProducto();
-			if(((Product)productos.get(0)).getId() == 0)
-				productos.remove(0);
 			sesion = request.getSession(true);
 			if(!sesion.isNew())
 			{
