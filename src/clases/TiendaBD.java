@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 /**
  * Conexión con la base de datos y sus métodos necesarios
- * @version 1.2
+ * @version 1.2.2
  * @author Pablo Oraa López
  */
 public class TiendaBD
@@ -100,10 +100,9 @@ public class TiendaBD
 		String searchProducts = "SELECT IdProduct, DESCRIPTION, PRICE FROM PRODUCTO";
 		List<Product> listaResul = new ArrayList<>();
 		try (Connection con = fuenteDatos.getConnection();
-			 PreparedStatement ps = con.prepareStatement(searchProducts, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);)
+			 PreparedStatement ps = con.prepareStatement(searchProducts);)
 		{
 			ResultSet rs = ps.executeQuery();
-			rs.first();
 			while(rs.next())
 				listaResul.add(new Product(rs.getInt("IdProduct"),rs.getString("DESCRIPTION"),rs.getDouble("PRICE")));
 			rs.close();
