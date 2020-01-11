@@ -1,8 +1,8 @@
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
-<%@page import="clases.ServletControlador"%>
 <%@page import="clases.User"%>
+<%@page import="clases.ServletControlador"%>
 <%@page import="java.sql.ResultSet"%>
 <%@page import="java.sql.SQLException"%>
 <%@page import="java.sql.Connection"%>
@@ -34,15 +34,10 @@
 		<title>Tienda</title>
 		<script type="text/javascript" src="scripts.js">
 		</script>
-		<script type="text/javascript">
-		function ajustarUnidades()
-		{
-			document.getElementById("Unidades").value = -1;
-		}
-		</script>
+		
 	</head>
 	<body>
-		<%	productos = servlet.obtenerProducto();
+		<%	
 			sesion = request.getSession(true);
 			if(!sesion.isNew())
 			{
@@ -56,11 +51,19 @@
 				sesion.setAttribute("User", new User());
 			}
 			int productID = request.getParameter("producto") != null ? Integer.parseInt(request.getParameter("producto")) : 0;
-			numerUnidades = request.getParameter("Unidades") != null && request.getParameter("Unidades") != "" ? Integer.parseInt(request.getParameter("Unidades")) : 0;
+			try
+			{
+				numerUnidades = request.getParameter("Unidades") != null ? Integer.parseInt(request.getParameter("Unidades")) : 0;
+			}catch(NumberFormatException e)
+			{
+				numerUnidades = -1;
+			}
 		if(userIniciado)
 		{
 			if(productID == 0 || numerUnidades == 0)
-			{%>
+			{
+				productos = servlet.obtenerProducto();
+		%>
 				<div align="center">
 				<h1>Bienvenido a la Tienda de DAM <%=usuario.getUsername() != "" ? usuario.getUsername() : "" %>.</h1>
 					<form action="Tienda.jsp" method="post">
@@ -73,7 +76,7 @@
 						<b>Unidades: </b> <input type="Number" min=1 id="Unidades" Name="Unidades"/>
 						<br/>
 						<input type="submit" name="Opcion" value="Cestar"/>
-						<input style="border:none; color:blue; background-color:white; cursor:pointer;" type="submit" name="Opcion" value="Ver Carrito" onclick="ajustarUnidades();"/>
+						<input style="border:none; color:blue; background-color:white; cursor:pointer;" type="submit" name="Opcion" value="Ver Carrito"/>
 					</form>
 				</div>
 		  <%}
