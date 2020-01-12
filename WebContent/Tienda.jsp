@@ -1,3 +1,4 @@
+<%@page import="clases.Invoice"%>
 <%@page import="java.util.Map.Entry"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
@@ -22,7 +23,6 @@
 	int numerUnidades;
 	double total;
 	double totalProd;
-	boolean userIniciado = false;
 	HttpSession sesion;
 	ServletControlador servlet = new ServletControlador(true);
 	User usuario;%>
@@ -42,7 +42,6 @@
 			if(!sesion.isNew())
 			{
 				productosSeleccionados = (HashMap<Integer,Integer>)sesion.getAttribute("productosSeleccionados");
-				userIniciado = true;
 				usuario = (User)sesion.getAttribute("User");
 			}
 			else
@@ -58,15 +57,19 @@
 			{
 				numerUnidades = -1;
 			}
-		if(userIniciado)
+		if(usuario != null)
 		{
 			if(productID == 0 || numerUnidades == 0)
 			{
 				productos = servlet.obtenerProducto();
 		%>
 				<div align="center">
-				<h1>Bienvenido a la Tienda de DAM <%=usuario.getUsername() != "" ? usuario.getUsername() : "" %>.</h1>
 					<form action="Tienda.jsp" method="post">
+						<h1>Bienvenido a la Tienda de DAM 
+								<b><input style="border:none; color:blue; background-color:white;
+															 cursor:pointer; font-weight:bold; font-size:30px;" type="submit" name="Opcion" 
+															 value="<%=usuario.getUsername()%>"/></b>.
+						</h1>
 						<b>Listado productos:</b> <select name="producto">
 							<%for(Product prod : productos) 
 							  {%>
@@ -82,55 +85,100 @@
 		  <%}
 			else
 			{
-				total = 0;
-				if(request.getParameter("Opcion").equals("Cestar"))
+				if(request.getParameter("Opcion").equals(usuario.getUsername()))
 				{
-					if(!productosSeleccionados.containsKey(productID))
-						productosSeleccionados.put(productID ,numerUnidades);
-					else
-						productosSeleccionados.put(productID, productosSeleccionados.get(productID)+numerUnidades);
+					%>
+					<div align="center">
+						<h1>Historial de compras de <%=usuario.getUsername() %>:</h1>
+						<% 
+							List<Invoice> invoiceList = servlet.getInvoice(usuario.getId());
+							if(invoiceList.size() == 0)
+							{%>
+								<p>El usuario <%=usuario.getUsername() %> no ha realizado ninguna compra</p>
+						  <%}
+							else
+							{%>
+								<%for(Invoice invoice : invoiceList)
+								  {%>
+									<table border="2">
+										<tr align="center">
+											<td colspan="2"><b>Compra realizada el <%=invoice.getDate() %></b></td>
+										</tr>
+										<tr>
+											<td><b>PRODUCTO</b></td>
+											<td><b>UNIDADES</b></td>
+										</tr>
+										<% for(Entry<Product, Integer> entry : invoice.getProductList().entrySet())
+										   {%>
+										   		<tr>
+													<td><%=entry.getKey().getDescripcion() %></td>
+													<td><%=entry.getValue() %></td>
+												</tr>		
+										 <%} %>
+										 <tr>
+										 	<td colspan="2">TOTAL COMPRA: <%=invoice.getTotal() %> euros</td>
+										 </tr>
+									 </table>
+									 <br/><br/>
+								<%}%>
+							<%} %>
+						<a href="">Comprar productos</a> <a href="Index.jsp">Cerrar sesi&oacute;n</a>
+					</div>
+					<%
 				}
-				%>
-				<div align="center">
-					<form action="ServletControlador" method="get" name="formFinal">
-						<h1>Carrito de la compra de <%=usuario.getUsername() != "" ? usuario.getUsername() : ""  %></h1>
-						<table border="2">
-							<tr align="center">
-								<td colspan="4"><b>PRODUCTOS COMPRADOS</b></td>
-							</tr>
-							<tr>
-								<td></td>
-								<td><b>PRODUCTO</b></td>
-								<td><b>PRECIO (euros)</b></td>
-								<td><b>UNIDADES</b></td>
-							</tr>
-							<% for(Entry<Integer, Integer> entry : productosSeleccionados.entrySet())
-							   {
-								    Product p = servlet.getProduct(entry.getKey());
-								    totalProd = p.getPrecio() * entry.getValue();
-							   		total += totalProd;%>
-							   		<tr>
-										<td><input type="radio" onchange="habilitar();" name="ProdElim" value="<%=entry.getKey() %>"></td> <!-- listaProductos.get(i) -->
-										<td><%=p.getDescripcion() %></td>
-										<td><%=totalProd %>euros</td>
-										<td><%=entry.getValue() %></td>
-									</tr>
-									
-							 <%} %>
-							 <tr>
-							 	<td colspan="4">TOTAL COMPRA: <%=total %> euros</td>
-							 	<% sesion.setAttribute("Total", total); %>
-							 </tr>
-						</table>
-					
-			  			<br/>
-			  			<a href="Tienda.jsp">Seguir comprando</a>
-				  		<input type="submit" id="deleteProd" disabled name="Option" Value="Eliminar producto"/>
-				  		<input type="submit" id="shopProd" name="Option" Value="Comprar"/>
-				  		<a href="Index.jsp"><button>Salir</button></a>
-			  		</form>
-		  		</div>
-		  <%} 
+				else
+				{
+					total = 0;
+					if(request.getParameter("Opcion").equals("Cestar"))
+					{
+						if(!productosSeleccionados.containsKey(productID))
+							productosSeleccionados.put(productID ,numerUnidades);
+						else
+							productosSeleccionados.put(productID, productosSeleccionados.get(productID)+numerUnidades);
+					}
+					%>
+					<div align="center">
+						<form action="ServletControlador" method="get" name="formFinal">
+							<h1>Carrito de la compra de <%=usuario.getUsername() != "" ? usuario.getUsername() : ""  %></h1>
+							<table border="2">
+								<tr align="center">
+									<td colspan="4"><b>PRODUCTOS COMPRADOS</b></td>
+								</tr>
+								<tr>
+									<td></td>
+									<td><b>PRODUCTO</b></td>
+									<td><b>PRECIO (euros)</b></td>
+									<td><b>UNIDADES</b></td>
+								</tr>
+								<% for(Entry<Integer, Integer> entry : productosSeleccionados.entrySet())
+								   {
+									    Product p = servlet.getProduct(entry.getKey());
+									    totalProd = p.getPrecio() * entry.getValue();
+								   		total += totalProd;%>
+								   		<tr>
+											<td><input type="radio" onchange="habilitar();" name="ProdElim" value="<%=entry.getKey() %>"></td> <!-- listaProductos.get(i) -->
+											<td><%=p.getDescripcion() %></td>
+											<td><%=totalProd %>euros</td>
+											<td><%=entry.getValue() %></td>
+										</tr>
+										
+								 <%} %>
+								 <tr>
+								 	<td colspan="4">TOTAL COMPRA: <%=total %> euros</td>
+								 	<% sesion.setAttribute("Total", total); %>
+								 </tr>
+							</table>
+						
+				  			<br/>
+				  			<a href="Tienda.jsp">Seguir comprando</a>
+					  		<input type="submit" id="deleteProd" disabled name="Option" Value="Eliminar producto"/>
+					  		<input type="submit" id="shopProd" name="Option" Value="Comprar"/>
+					  		<a href="Index.jsp"><button>Salir</button></a>
+				  		</form>
+			  		</div>
+			  		
+		  <%	}
+			}
 		}
 		else
 		{

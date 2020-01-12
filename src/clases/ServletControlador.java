@@ -232,4 +232,14 @@ public class ServletControlador extends HttpServlet
 	{
 		return tiendaBD.getProduct(productID);
 	}
+	
+	/**
+	 * Obtiene las compras pasadas del usuario que haya iniciado sesión dentro de la aplicación.
+	 * @param userID ID del usuario del que se quieren recuperar las facturas (compras) pasadas.
+	 * @return Lista con todas las compras pasadas bajo la clase Invoice.
+	 */
+	public List<Invoice> getInvoice(int userID)
+	{
+		return tiendaBD.getInvoice(userID);
+	}
 }

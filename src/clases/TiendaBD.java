@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.naming.Context;
@@ -201,5 +202,43 @@ public class TiendaBD
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Obtiene todas las facturas del cliente que se haya pasado por parametro utilizando Tiquet y Compra.
+	 * Para ello, hace uso de una consulta que una Tiquet y Compra por el IDShopping y crea una lista de 
+	 * Invoice para indicar fecha, productos y unidades de cada producto y coste total.
+	 * @param userID ID del usuario del que se quieren obtener las facturas
+	 * @return Lista de Invoice con todos los datos pasados del usuario.
+	 */
+	public List<Invoice> getInvoice(int userID) 
+	{
+		List<Invoice> invoiceList = new ArrayList<Invoice>();
+		String getInvoices = "SELECT FECHAHORA, IDSHOPPING, TOTAL FROM TIQUET";
+		try(Connection con = fuenteDatos.getConnection();
+				 PreparedStatement ps = con.prepareStatement(getInvoices);)
+		{
+			ResultSet rs = ps.executeQuery();
+			while(rs.next())
+			{
+				String getProducts = "SELECT PRODUCTO.IDPRODUCT, DESCRIPTION, PRICE, QUANTITY "
+									+ "FROM PRODUCTO, COMPRA "
+									+ "WHERE PRODUCTO.IDPRODUCT = COMPRA.IDPRODUCT "
+									+ "AND IDSHOPPING = " + rs.getInt("IDSHOPPING");
+				HashMap<Product, Integer> productList = new HashMap<Product, Integer>();
+				PreparedStatement ps1 = con.prepareStatement(getProducts);
+				ResultSet rs2 = ps1.executeQuery();
+				while(rs2.next())
+					productList.put(new Product(rs2.getInt("IDPRODUCT"),rs2.getString("DESCRIPTION"), rs2.getDouble("PRICE")),rs2.getInt("QUANTITY"));
+				invoiceList.add(new Invoice(rs.getString("FECHAHORA").substring(0,rs.getString("FECHAHORA").indexOf(" ")), productList, rs.getDouble("TOTAL")));
+				rs2.close();
+				ps1.close();
+			}
+			rs.close();
+		} catch(SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return invoiceList;
 	}
 }
