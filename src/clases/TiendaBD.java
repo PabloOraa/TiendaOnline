@@ -214,7 +214,7 @@ public class TiendaBD
 	public List<Invoice> getInvoice(int userID) 
 	{
 		List<Invoice> invoiceList = new ArrayList<Invoice>();
-		String getInvoices = "SELECT FECHAHORA, IDSHOPPING, TOTAL FROM TIQUET";
+		String getInvoices = "SELECT FECHAHORA, IDSHOPPING, TOTAL FROM TIQUET WHERE IDUSER = " + userID;
 		try(Connection con = fuenteDatos.getConnection();
 				 PreparedStatement ps = con.prepareStatement(getInvoices);)
 		{
