@@ -3,9 +3,9 @@ package clases;
 import java.util.HashMap;
 
 /**
- * Clase Invoice con todos los valores necesarios para obtener las compras de un usuario en cuestión.
+ * Clase Invoice con todos los valores necesarios para obtener las compras de un usuario en cuesti&oacute;n.
  * @version 1.3
- * @author Pablo Oraa López
+ * @author Pablo Oraa L&oacute;pez
  */
 public class Invoice 
 {
@@ -16,7 +16,7 @@ public class Invoice
 	/**
 	 * Lista de productos incluidos en esa compra.
 	 */
-	private HashMap<Product,Integer> productList;
+	private HashMap<ProductoEntity,Integer> productList;
 	/**
 	 * Coste total de la compra
 	 */
@@ -28,7 +28,7 @@ public class Invoice
 	public Invoice()
 	{
 		date = "";
-		productList = new HashMap<Product,Integer>();
+		productList = new HashMap<ProductoEntity,Integer>();
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class Invoice
 	 * @param productList Lista de productos en un HashMap donde la clave es el producto y el valor el número de unidades del mismo.
 	 * @param total Coste total de la compra.
 	 */
-	public Invoice(String date, HashMap<Product,Integer> productList, double total)
+	public Invoice(String date, HashMap<ProductoEntity,Integer> productList, double total)
 	{
 		this.date = date;
 		this.productList = productList;
@@ -67,7 +67,7 @@ public class Invoice
 	 * Obtiene el mapa con los productos/unidades que están incluidos en esa compra.
 	 * @return HashMap&#60;Product,Integer&#62; de la factura en cuestión.
 	 */
-	public HashMap<Product,Integer> getProductList()
+	public HashMap<ProductoEntity,Integer> getProductList()
 	{
 		return productList;
 	}
@@ -76,7 +76,7 @@ public class Invoice
 	 * Indica la lista de productos y unidades que están incluidos en la compra.
 	 * @param productList HashMap con los productos como clave y sus unidades compradas como valor.
 	 */
-	public void setProductList(HashMap<Product,Integer> productList) 
+	public void setProductList(HashMap<ProductoEntity,Integer> productList)
 	{
 		this.productList = productList;
 	}
