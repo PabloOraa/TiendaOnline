@@ -1,5 +1,0 @@
-<Context path="/PracticaTiendaOnline" docBase = "PracticaTiendaOnline" debug="5" reloadable="true" crossContext="true">
-    <Resource name="jdbc/miDataSource" auth="Container" type="javax.sql.DataSource" 
-                driverClassName="com.mysql.jdbc.Driver" maxActive="100" maxIdle="30" maxWait="10000" username="root" password="" 
-                url= "jdbc:mysql://localhost/accesodatos" />
-</Context> 
