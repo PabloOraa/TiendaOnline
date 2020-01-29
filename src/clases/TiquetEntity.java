@@ -5,6 +5,11 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+/**
+ * POJO Tiquet de la base de datos
+ * @version 2.0
+ * @author Pablo Oraa L&oacute;pez
+ */
 @Entity
 @Table(name = "tiquet", schema = "accesodatos", catalog = "")
 public class TiquetEntity {

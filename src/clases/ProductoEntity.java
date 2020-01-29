@@ -4,6 +4,11 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * POJO Producto de la base de datos
+ * @version 2.0
+ * @author Pablo Oraa L&oacute;pez
+ */
 @Entity
 @Table(name = "producto", schema = "accesodatos", catalog = "")
 public class ProductoEntity {
@@ -40,13 +45,6 @@ public class ProductoEntity {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
-
-    /*@SuppressWarnings("JpaAttributeMemberSignatureInspection")
-    public String getStringPrice()
-    {
-        DecimalFormat decimalFormat = new DecimalFormat("#.##");
-        return decimalFormat.format(price.doubleValue());
-    }*/
 
     @Override
     public boolean equals(Object o) {

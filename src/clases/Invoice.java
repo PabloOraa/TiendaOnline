@@ -32,10 +32,11 @@ public class Invoice
 	}
 	
 	/**
-	 * Constructor parametrizado que crea un objeto de la clase Invoice con fecha,+
+	 * Constructor parametrizado que crea un objeto de la clase Invoice con fecha,
 	 * productos y total de la compra.
 	 * @param date Fecha en la que se produce la compra en formato texto.
-	 * @param productList Lista de productos en un HashMap donde la clave es el producto y el valor el número de unidades del mismo.
+	 * @param productList Lista de productos en un HashMap donde la clave es el producto y el valor el n&uacute;mero de
+	 *                    unidades del mismo.
 	 * @param total Coste total de la compra.
 	 */
 	public Invoice(String date, HashMap<ProductoEntity,Integer> productList, double total)
@@ -47,7 +48,7 @@ public class Invoice
 
 	/**
 	 * Devuelve la fecha en el formato en el que se haya guardado a la hora de crearlo
-	 * @return Texto que indica año-mes-dia en la que se realizó la compra.
+	 * @return Texto que indica año-mes-dia en la que se realiz&oacute; la compra.
 	 */
 	public String getDate() 
 	{
@@ -55,7 +56,7 @@ public class Invoice
 	}
 
 	/**
-	 * Indica la fecha en la que se realizó la compra a partir del parámetro date.
+	 * Indica la fecha en la que se realiz&oacute; la compra a partir del parámetro date.
 	 * @param date Fecha en la que se realiza la compra con formato año-mes-día.
 	 */
 	public void setDate(String date) 
@@ -64,7 +65,7 @@ public class Invoice
 	}
 
 	/**
-	 * Obtiene el mapa con los productos/unidades que están incluidos en esa compra.
+	 * Obtiene el mapa con los productos/unidades que est&aacute;n incluidos en esa compra.
 	 * @return HashMap&#60;Product,Integer&#62; de la factura en cuestión.
 	 */
 	public HashMap<ProductoEntity,Integer> getProductList()
@@ -73,7 +74,7 @@ public class Invoice
 	}
 
 	/**
-	 * Indica la lista de productos y unidades que están incluidos en la compra.
+	 * Indica la lista de productos y unidades que est&aacute;n incluidos en la compra.
 	 * @param productList HashMap con los productos como clave y sus unidades compradas como valor.
 	 */
 	public void setProductList(HashMap<ProductoEntity,Integer> productList)
@@ -82,7 +83,7 @@ public class Invoice
 	}
 
 	/**
-	 * Coste total que ha tenido la compra en cuestión.
+	 * Coste total que ha tenido la compra en cuesti&oacute;n.
 	 * @return Double con el coste de la factura.
 	 */
 	public double getTotal() 

@@ -4,6 +4,11 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * POJO Compra de la base de datos
+ * @version 2.0
+ * @author Pablo Oraa L&oacute;
+ */
 @Entity
 @Table(name = "compra", schema = "accesodatos", catalog = "")
 @IdClass(CompraEntityPK.class)

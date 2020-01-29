@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ import modelo.TiendaBD;
 /**
  * Servlet implementation class ServletControlador
  * @version 2.0
- * @author Pablo Oraa L�pez
+ * @author Pablo Oraa L&oacute;pez
  */
 @WebServlet("/ServletControlador")
 @Resource(name = "jdbs/miDataSource")
@@ -28,20 +27,19 @@ public class ServletControlador extends HttpServlet
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Usuario que inicia sesi�n y/o se registra dentro de la Tienda Online.
+	 * Usuario que inicia sesi&oacute;n y/o se registra dentro de la Tienda Online.
 	 */
 	private UsuarioEntity usuario;
 	/**
-	 * Conexi�n con la base de datos para realizar las consultas m�nimas y necesarias dentro de la aplicaci�n.
+	 * Conexi&oacute;n con la base de datos para realizar las consultas m&iacute;nimas y necesarias dentro de la aplicaci&oacute;n.
 	 */
 	private TiendaBD tiendaBD;
 	
 	/**
-     * @throws ClassNotFoundException 
      * @see HttpServlet#HttpServlet()
      */
-    public ServletControlador() throws ClassNotFoundException 
-    {
+    public ServletControlador()
+	{
         super();
         usuario = new UsuarioEntity();
         tiendaBD = new TiendaBD();
@@ -49,23 +47,27 @@ public class ServletControlador extends HttpServlet
 
     public ServletControlador(boolean propio)
     {
+    	System.out.print(propio);
     	usuario = new UsuarioEntity();
         tiendaBD = new TiendaBD();
     }
 
 	/**
-	 * M�todo para responder a las peticiones Get dentro del Servlet. <br> Utilizar� los par�metros para saber que opci�n debe
-	 * realizar. Si se llama existiendo alg�n tipo de Inicio en la Tienda, se pasar� al m�todo doPost 
+	 * M&eacute;todo para responder a las peticiones Get dentro del Servlet. <br> Utilizar&aacute; los pa&aacute;metros
+	 * para saber que opci&oacute;n debe realizar. Si se llama existiendo alg&uacute;n tipo de Inicio en la Tienda, se
+	 * pasar&aacute; al m&eacute;todo doPost
 	 * ({@link ServletControlador#doPost ((HttpServletRequest request, HttpServletResponse response)}).
-	 * <br>Por otra parte, si no hay ning�n tipo se mirar� si hay un Option (viene de Tienda.jsp) y el tipo que es para a�adir
-	 * productos a una base de datos o, en su defecto, eliminar el producto que se haya marcado dentro de la lista en Tienda.jsp.
+	 * <br>Por otra parte, si no hay ning&uacute;n tipo se mirar&aacute; si hay un Option (viene de Tienda.jsp) y el tipo
+	 * que es para a&ntilde;adir productos a una base de datos o, en su defecto, eliminar el producto que se haya marcado
+	 * dentro de la lista en Tienda.jsp.
 	 * 
 	 * <br>
-	 * Por �ltimo, si no hay ning�n tipo, si no hay ning�n Option, o si lo hay pero este es Comprar, se llevar� a Index.jsp para
-	 * comenzar con el proceso. En cambio, si se marc� Eliminar Producto volveremos a la tienda donde podremos continuar comprando.
+	 * Por &uacute;ltimo, si no hay ning&uacute;n tipo, si no hay ning&uacute;n Option, o si lo hay pero este es Comprar,
+	 * se llevar&aacute; a Index.jsp para comenzar con el proceso. En cambio, si se marc&oacute; Eliminar Producto volveremos
+	 * a la tienda donde podremos continuar comprando.
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
 		boolean irTienda = false;
 		if(request.getParameter("Tipo") != null)
@@ -85,12 +87,13 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Elimina un producto de las listas que ha seleccionado el usuario, y que a�n no se ha guardado en la base de datos.
+	 * Elimina un producto de las listas que ha seleccionado el usuario, y que a&uacute;n no se ha guardado en la base de datos.
 	 * <br/>
-	 * Se recupera la lista de productos desde la sesi�n (en un HashMap) y se eliminar� por la clave del producto que hayamos
-	 * pasado por par�metro. Una vez hecho esto, se guarda el nuevo mapa en la sesi�n de nuevo.
+	 * Se recupera la lista de productos desde la sesi&oacute;n (en un HashMap) y se eliminar&aacute; por la clave del
+	 * producto que hayamos pasado por par&aacute;metro. Una vez hecho esto, se guarda el nuevo mapa en la sesi&oacute;n
+	 * de nuevo.
 	 * @param producto Producto que se desea eliminar de las listas.
-	 * @param sesion Sesi�n de la aplicaci�n.
+	 * @param sesion Sesi&oacute;n de la aplicaci&oacute;n.
 	 */
 	private void deleteProduct(int producto, HttpSession sesion)
 	{
@@ -100,18 +103,21 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Contiene toda la autenticaci�n desde los usuarios tanto de Validaci�n como de Alta. Para ello, utiliza el par�metro
-	 * Tipo, que definir� de donde viene el usuario.
+	 * Contiene toda la autenticaci&oacute;n desde los usuarios tanto de Validaci&oacute;n como de Alta. Para ello, utiliza
+	 * el par&aacute;metro Tipo, que definir&aacute; de donde viene el usuario.
 	 * <ul>
-	 * 	<li>En caso de venir desde el registro, se llamar� al m�todo addUsuario del propio servlet, que nos devolver� un n�mero
-	 * indicando el n�mero de filas que se han a�adido a la base de datos. Siempre y cuando este no sea 0, se considerar� que
-	 * se ha creado correctamente, y por tanto debe avanzar. <br/> En caso de ser 0, volver� a Alta.jsp con un mensaje indicando
-	 * al usuario que ya existe un usuario con ese nombre. </li>
-	 * 
-	 *  <li>En caso de venir desde el inicio de sesi�n, se comprobar� contra base de datos que existe un usuario que tenga ese
-	 * nombre y esa contrase�a. Como este m�todo devuelve un booleano, si es true, se continuar� a la tienda configurando la 
-	 * sesi�n de la aplicaci�n.<br/> En cambio, si es false nos devolver� a Validacion.jsp con un mensaje indicando que el nombre
-	 * de usuario o la contrase�a son incorrectos. </li>
+	 * 		<li>En caso de venir desde el registro, se llamar&aacute; al m&eacute;todo addUsuario del propio servlet, que nos
+	 *	 	devolver&aacute; un n&uacute;mero indicando el n&uacute;mero de filas que se han a&ntilde;adido a la base de datos.
+	 *	 	Siempre y cuando este no sea 0, se considerar&aacute;M que se ha creado correctamente, y por tanto debe avanzar.
+	 *	 	<br> En caso de ser 0, volver&aacute; a Alta.jsp con un mensaje indicando al usuario que ya existe un usuario con
+	 *	 	ese nombre. </li>
+		 *
+	 *	  <li>En caso de venir desde el inicio de sesi&oacute;n, se comprobar&aacute; contra base de datos que existe un
+	 *	  usuario que tenga ese nombre y esa contrase&ntilde;a. Como este m&eacute;todo devuelve un booleano, si es true,
+	 *	  se continuar&aacute; a la tienda configurando la sesi&oacute;n de la aplicaci&oacute;n.<br> En cambio, si es
+	 *	  false nos devolver&aacute; a Validacion.jsp con un mensaje indicando que el nombre de usuario o la contrase&ntilde;a
+	 *	  son incorrectos. </li>
+	 *  </ul>
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException
@@ -147,12 +153,14 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Configura los par�metros de la sesi�n que queremos utilizar en Tienda.jsp. Se llama al m�todo cuando hemos podido iniciar
-	 * sesi�n correctamente dentro de la Tienda Online.
+	 * Configura los par&aacute;metros de la sesi&oacute;n que queremos utilizar en Tienda.jsp. Se llama al m&eacute;todo
+	 * cuando hemos podido iniciar sesi&oacute;n correctamente dentro de la Tienda Online.
 	 * <br>
-	 * Si la sesi�n es nueva, o en su defecto la lista de productos (en forma de HashMap) no existe, se a�adir� ese HashMap a la sesi�n.
+	 * Si la sesi&oacute;n es nueva, o en su defecto la lista de productos (en forma de HashMap) no existe, se
+	 * a&ntilde;adir&aacute; ese HashMap a la sesi&oacute;n.
 	 * <br>
-	 * Como se inicia sesi�n siempre que se llama a este m�todo, se guarda el atributo User con todos los datos del usuario en cuesti�n.
+	 * Como se inicia sesi&oacute;n siempre que se llama a este m&eacute;todo, se guarda el atributo User con todos los
+	 * datos del usuario en cuesti&oacute;n.
 	 * @param request Request del servlet que recibimos de doPost.
 	 */
 	private void configurarSesion(HttpServletRequest request) 
@@ -164,11 +172,12 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * A�ade un usuario a la base de datos con el usuario y la contrase�a en cuesti�n.
-	 * @param user Nombre de usuario con el que desea registrarse en la aplicaci�n
-	 * @param pass Contrase�a del usuario para poder identificarse.
-	 * @return Numero de lineas que se han a�adido dentro de la base de datos. Si no se ha a�adido ninguna fila devolver� 0.
-	 * 			<br> Si no, devolver� un n�mero positivo, y asociar� al Usuario de ServletControlador el usuario que se ha a�adido.
+	 * A&ntilde;ade un usuario a la base de datos con el usuario y la contrase&ntilde;a en cuesti&oacute;n.
+	 * @param user Nombre de usuario con el que desea registrarse en la aplicaci&oacute;n
+	 * @param pass Contrase&ntilde;a del usuario para poder identificarse.
+	 * @return Numero de lineas que se han a&ntilde;adido dentro de la base de datos. Si no se ha a&ntilde;adido ninguna
+	 * 			fila devolver&aacute; 0. <br> Si no, devolver&aacute; un n&uacute;mero positivo, y asociar&aacute; al
+	 * 			Usuario de ServletControlador el usuario que se ha a&ntilde;adido.
 	 */
 	private int addUsuario(String user, String pass)
 	{
@@ -179,9 +188,9 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Recupera un usuario de la base de datos a partir de su nombre de usuario y de la contrase�a.
+	 * Recupera un usuario de la base de datos a partir de su nombre de usuario y de la contrase&ntilde;a.
 	 * @param user Nombre de usuario en formato String.
-	 * @param pass Contrase�a de la aplicaci�n en formato String.
+	 * @param pass Contrase&ntilde;a de la aplicaci&oacute;n en formato String.
 	 * @return True si ha encontrado el usuario y False si no ha encontrado nada.
 	 */
 	private boolean recuperarUsuario(String user, String pass)
@@ -191,7 +200,7 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Obtiene los productos que est�n guardados dentro de la base de datos.
+	 * Obtiene los productos que est&aacute;n guardados dentro de la base de datos.
 	 * @return LIsta de productos.
 	 */
 	public List<ProductoEntity> obtenerProducto()
@@ -200,11 +209,11 @@ public class ServletControlador extends HttpServlet
 	}	
 	
 	/**
-	 * A�ade la compra guardada en la sesi�n del usuario a la base de datos. Lo primero que har� ser� crear el
-	 * tiquet de la compra a partir del usuario y el total, devolviendo el ID que se acaba de insertar.
+	 * A&ntilde;ade la compra guardada en la sesi&oacute;n del usuario a la base de datos. Lo primero que har&aacute;
+	 * ser&aacute; crear el tiquet de la compra a partir del usuario y el total, devolviendo el ID que se acaba de insertar.
 	 * <br/>
-	 * A continuaci�n se insertar� en Compra cada producto con su cantidad y el precio total gastado.
-	 * @param sesion Sesi�n de la aplicaci�n
+	 * A continuaci&oacute;n se insertar&aacute; en Compra cada producto con su cantidad y el precio total gastado.
+	 * @param sesion Sesi&oacute;n de la aplicaci&oacute;n
 	 */
 	private void addCompra(HttpSession sesion)
 	{
@@ -214,8 +223,8 @@ public class ServletControlador extends HttpServlet
 	}
 
 	/**
-	 * Recupera el usuario que, previamente, se haya iniciado sesi�n o registrado en la aplicaci�n.
-	 * @return Usuario con el que se ha iniciado sesi�n en la aplicaci�n
+	 * Recupera el usuario que, previamente, se haya iniciado sesi&oacute;n o registrado en la aplicaci&oacute;n.
+	 * @return Usuario con el que se ha iniciado sesi&oacute;n en la aplicaci&oacute;n
 	 */
 	public UsuarioEntity getUser()
 	{
@@ -223,7 +232,7 @@ public class ServletControlador extends HttpServlet
 	}
 	
 	/**
-	 * Recupera el producto que est� asociado al ID que se le haya pasado por par�metro.
+	 * Recupera el producto que est&aacute; asociado al ID que se le haya pasado por par&aacute;metro.
 	 * @param productID ID del producto a buscar
 	 * @return Producto encontrado en la base de datos.
 	 */
@@ -233,7 +242,7 @@ public class ServletControlador extends HttpServlet
 	}
 	
 	/**
-	 * Obtiene las compras pasadas del usuario que haya iniciado sesi�n dentro de la aplicaci�n.
+	 * Obtiene las compras pasadas del usuario que haya iniciado sesi&oacute;n dentro de la aplicaci&oacute;n.
 	 * @param userID ID del usuario del que se quieren recuperar las facturas (compras) pasadas.
 	 * @return Lista con todas las compras pasadas bajo la clase Invoice.
 	 */

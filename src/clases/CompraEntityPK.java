@@ -4,7 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
-
+/**
+ * Implementaci&oacute;n de la clave primaria de CompraEntity
+ * @version 2.0
+ * @author Pablo Oraa L&oacute;pez
+ */
 public class CompraEntityPK implements Serializable {
     private int idShopping;
     private int idProduct;

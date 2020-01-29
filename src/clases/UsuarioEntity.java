@@ -3,6 +3,11 @@ package clases;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * POJO Usuario de la base de datos
+ * @version 2.0
+ * @author Pablo Oraa L&oacute;pez
+ */
 @Entity
 @Table(name = "usuario", schema = "accesodatos", catalog = "accesodatos")
 public class UsuarioEntity {
