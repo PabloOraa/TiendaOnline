@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Conexi�n con la base de datos y sus m�todos necesarios
- * @version 2.0
+ * @version 2.0.1
  * @author Pablo Oraa L�pez
  */
 public class TiendaBD
@@ -97,9 +97,7 @@ public class TiendaBD
 		Query<?> query = session.createQuery("from UsuarioEntity where username=?1 and password=?2");
 		query.setParameter(1,user);
 		query.setParameter(2,pass);
-		for(Object o : query.list())
-			return (UsuarioEntity)o;
-		return null;
+		return (UsuarioEntity)query.uniqueResult();
 	}
 
 	/**
@@ -151,9 +149,7 @@ public class TiendaBD
 		configSession();
 		Query<?> query = session.createQuery("from ProductoEntity where idProduct = ?1");
 		query.setParameter(1,productID);
-		for(Object o : query.list())
-			return (ProductoEntity)o;
-		return null;
+		return (ProductoEntity)query.uniqueResult();
 	}
 
 	/**
